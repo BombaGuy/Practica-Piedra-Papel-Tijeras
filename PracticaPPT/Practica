@@ -1,0 +1,176 @@
+#/bin/bash
+
+#declarar las posibilidades
+declare -A condicion_ganar
+condicion_ganar["tijeras"]="piedra"
+condicion_ganar["papel"]="tijeras"
+condicion_ganar["piedra"]="papel"
+
+#valores para la maquina
+items=("piedra" "papel" "tijeras")
+
+echo "Bienvenido a Piedra, Papel o Tijeras, elige una opción:"
+
+menu(){
+    echo -e
+    echo "1) Modo Normal"
+    echo "2) Modo Dificil"
+    echo "3) Modo Extremo"
+    echo "4) Salir"
+    echo -e
+}
+
+
+
+
+opcionesJuego(){
+
+    menu
+    #para salir del menu cuando se pida
+    salir=false
+
+    #leer la opcion del menu
+    read opcion
+    
+    case $opcion in
+        1)modoNormal;;
+        2)modoDificil;;
+        3)modoExtremo;;
+        4)echo "Hasta la próxima"
+        salir=true;;
+    esac
+}
+
+
+opcionMaquina(){
+    #eleccion de la maquina
+     maquinote=${items[$((RANDOM % 3))]}
+     echo $maquinote
+}
+
+
+#modo normal donde hay turnos ilimitados sin modificación de la 
+#maquina
+modoNormal(){
+    #opcion para salir del bucle
+    salir=false
+    #contador de turnos de juego
+    turnos=1
+
+    echo -e
+    echo "En el modo normal podras jugar contra la maquina las veces que quieras sin limite de turnos hasta ganar"
+    while [[ $salir != true ]]; do
+        echo -e
+        echo Turno $turnos
+        #opcion de la maquina
+        maquina="$(opcionMaquina)"
+        #echo La opcion de la maquina es $maquina
+        echo "Elige, Piedra(1), Papel(2), Tijeras(3) o Salir(4)"
+        #leer opcion
+        read opcionUsuario
+
+        if [[ $opcionUsuario != 4 ]]; then
+            if [[ $maquina == ${items[$opcionUsuario - 1]} ]]; then 
+                echo Empate: La máquina eligió $maquina y tu elegiste ${items[$opcionUsuario - 1]}
+                echo -e
+                let "turnos++"
+            elif [[ ${condicion_ganar[$maquina]} == ${items[$opcionUsuario - 1]} ]]; then
+                echo ¡Ganaste!: La máquina eligió $maquina y tu elegiste ${items[$opcionUsuario - 1]}
+                echo -e
+                echo Has ganado en $turnos turnos
+                salir=true
+            else 
+                echo Perdiste...: La máquina eligió $maquina y tu elegiste ${items[$opcionUsuario - 1]}
+                echo -e
+                let "turnos++"
+            fi
+        else 
+            echo Has dejado de jugar en $turnos turnos
+            salir=true
+        fi
+    done
+}
+
+#modo dificl donde hay turnos limitados a 5 sin modificación de la 
+#maquina
+modoDificil(){
+    #opcion para salir del bucle
+    salir=false
+    #contador de turnos del juego
+    turnos=1
+
+    echo -e
+    echo En el modo dificil únicamente tendrás 5 intentos para vencer a la máquina
+    while [[ $salir != true && $turnos != 6 ]]; do
+            echo -e
+            echo Turno $turnos
+            #Opción de la máquina
+            maquina="$(opcionMaquina)"
+            #echo La opcion de la maquina es $maquina
+            echo "Elige, Piedra(1), Papel(2), Tijeras(3) o Salir(4)"
+            #leer opcion
+            read opcionUsuario
+
+            if [[ $opcionUsuario != 4 ]]; then
+                if [[ $maquina == ${items[$opcionUsuario - 1]} ]]; then  
+                    echo Empate: La máquina eligió $maquina y tu elegiste ${items[$opcionUsuario - 1]}
+                    echo -e
+                    let "turnos++"
+                elif [[ ${condicion_ganar[$maquina]} == ${items[$opcionUsuario - 1]} ]]; then
+                    echo ¡Ganaste!: La máquina eligió $maquina y tu elegiste ${items[$opcionUsuario - 1]}
+                    echo -e
+                    echo Has ganado en $turnos turnos
+                    salir=true
+                else  
+                    echo Perdiste...: La máquina eligió $maquina y tu elegiste ${items[$opcionUsuario - 1]}
+                    echo -e
+                    let "turnos++"
+                fi
+            else 
+                echo Has dejado de jugar antes de que se acabaran los turnos
+                echo Turnos jugados: $turnos
+                salir=true
+            fi
+    done
+
+}
+
+#modo extremo en el cual la maquina esta trucada
+#no se puede ganar
+modoExtremo(){
+    #opcion para salir del bucle
+    salir=false
+    #contador de turnos del juego
+    turnos=1
+
+    echo -e
+    echo Buena suerte
+    while [[ $salir != true ]]; do
+        echo -e
+        echo Turno $turnos
+        echo "Elige, Piedra(1), Papel(2), Tijeras(3) o Salir(4)"
+        #leer opcion
+        read opcionUsuario
+        if [[ $opcionUsuario != 4 ]]; then
+            #para hacer que la maquina siempre gane
+            maquina="${condicion_ganar[${items[$opcionUsuario - 1]}]}"
+
+            if [[ $maquina == ${items[$opcionUsuario - 1]} ]]; then  
+                echo esto no deberia de salir
+            elif [[ ${condicion_ganar[$maquina]} == ${items[$opcionUsuario - 1]} ]]; then
+                echo esto menos
+            else  
+                echo Perdiste...: La máquina eligió $maquina y tu elegiste ${items[$opcionUsuario - 1]}
+                echo -e
+                let "turnos++"
+            fi
+        else
+            echo Turnos jugados: $turnos
+            salir=true
+        fi
+    done
+}
+
+#llamar a opcionesJuego e inciarlo
+opcionesJuego
+
