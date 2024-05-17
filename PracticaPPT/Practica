@@ -56,15 +56,19 @@ modoNormal(){
     salir=false
     #contador de turnos de juego
     turnos=1
+    #marcadores
+    puntuacionUsuario=0
+    puntuacionMaquina=0
 
     echo -e
-    echo "En el modo normal podras jugar contra la maquina las veces que quieras sin limite de turnos hasta ganar"
+    echo "En el modo normal podras jugar contra la maquina las veces que quieras sin limite de turnos"
     while [[ $salir != true ]]; do
         echo -e
         echo Turno $turnos
         #opcion de la maquina
         maquina="$(opcionMaquina)"
         #echo La opcion de la maquina es $maquina
+        echo TU: $puntuacionUsuario CPU: $puntuacionMaquina
         echo "Elige, Piedra(1), Papel(2), Tijeras(3) o Salir(4)"
         #leer opcion
         read opcionUsuario
@@ -77,15 +81,17 @@ modoNormal(){
             elif [[ ${condicion_ganar[$maquina]} == ${items[$opcionUsuario - 1]} ]]; then
                 echo ¡Ganaste!: La máquina eligió $maquina y tu elegiste ${items[$opcionUsuario - 1]}
                 echo -e
-                echo Has ganado en $turnos turnos
-                salir=true
+                let "turnos++"
+                let "puntuacionUsuario++"
             else 
                 echo Perdiste...: La máquina eligió $maquina y tu elegiste ${items[$opcionUsuario - 1]}
                 echo -e
                 let "turnos++"
+                let "puntuacionMaquina++"
             fi
         else 
             echo Has dejado de jugar en $turnos turnos
+            echo TU: $puntuacionUsuario  CPU: $puntuacionMaquina
             salir=true
         fi
     done
@@ -98,15 +104,19 @@ modoDificil(){
     salir=false
     #contador de turnos del juego
     turnos=1
+    #marcadores
+    puntuacionUsuario=0
+    puntuacionMaquina=0
 
     echo -e
-    echo En el modo dificil únicamente tendrás 5 intentos para vencer a la máquina
+    echo En el modo dificil será un mejor de 5 contra la máquina
     while [[ $salir != true && $turnos != 6 ]]; do
             echo -e
             echo Turno $turnos
             #Opción de la máquina
             maquina="$(opcionMaquina)"
             #echo La opcion de la maquina es $maquina
+            echo TU: $puntuacionUsuario CPU: $puntuacionMaquina
             echo "Elige, Piedra(1), Papel(2), Tijeras(3) o Salir(4)"
             #leer opcion
             read opcionUsuario
@@ -119,18 +129,20 @@ modoDificil(){
                 elif [[ ${condicion_ganar[$maquina]} == ${items[$opcionUsuario - 1]} ]]; then
                     echo ¡Ganaste!: La máquina eligió $maquina y tu elegiste ${items[$opcionUsuario - 1]}
                     echo -e
-                    echo Has ganado en $turnos turnos
-                    salir=true
+                    let "turnos++"
+                    let "puntuacionUsuario++"
                 else  
                     echo Perdiste...: La máquina eligió $maquina y tu elegiste ${items[$opcionUsuario - 1]}
                     echo -e
                     let "turnos++"
+                    let "puntuacionMaquina++"
                 fi
             else 
                 echo Has dejado de jugar antes de que se acabaran los turnos
                 echo Turnos jugados: $turnos
                 salir=true
             fi
+        echo TU: $puntuacionUsuario CPU: $puntuacionMaquina
     done
 
 }
@@ -142,12 +154,16 @@ modoExtremo(){
     salir=false
     #contador de turnos del juego
     turnos=1
+    #marcadores
+    puntuacionUsuario=0
+    puntuacionMaquina=0
 
     echo -e
     echo Buena suerte
     while [[ $salir != true ]]; do
         echo -e
         echo Turno $turnos
+        echo TU: $puntuacionUsuario CPU: $puntuacionMaquina
         echo "Elige, Piedra(1), Papel(2), Tijeras(3) o Salir(4)"
         #leer opcion
         read opcionUsuario
@@ -156,16 +172,18 @@ modoExtremo(){
             maquina="${condicion_ganar[${items[$opcionUsuario - 1]}]}"
 
             if [[ $maquina == ${items[$opcionUsuario - 1]} ]]; then  
-                echo esto no deberia de salir
+                echo opcion Incorrecta
             elif [[ ${condicion_ganar[$maquina]} == ${items[$opcionUsuario - 1]} ]]; then
-                echo esto menos
+                echo opcion Incorrecta
             else  
                 echo Perdiste...: La máquina eligió $maquina y tu elegiste ${items[$opcionUsuario - 1]}
                 echo -e
                 let "turnos++"
+                let "puntuacionMaquina++"
             fi
         else
             echo Turnos jugados: $turnos
+            echo TU: $puntuacionUsuario CPU: $puntuacionMaquina
             salir=true
         fi
     done
